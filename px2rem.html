@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pixel to REM Converter</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+        <script>
+            function pixelsToRem(pixels, baseFontSize) {
+                // Calculate the value of 1 REM in pixels
+                const remInPixels = baseFontSize || parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+                // Convert the font size from pixels to REMs and round to 2 decimal places
+                const remValue = parseFloat(pixels) / remInPixels;
+                return remValue.toFixed(2) + 'rem';
+            }
+
+            function convertFontSize() {
+                const pixelsInput = document.getElementById('pixels-input');
+                const remOutput = document.getElementById('rem-output');
+                const pixelsValue = pixelsInput.value;
+                const baseFontSizeinput = document.getElementById('base-font-size-input');
+                const baseFontSizeLabel = document.getElementById('base-font-size-label');
+                const baseFontSize = baseFontSizeinput.value;
+                const remValue = pixelsToRem(pixelsValue, baseFontSize);
+                remOutput.textContent = remValue;
+                //baseFontSizeLabel.textContent = baseFontSize;
+            }
+
+            function copyToClipboard() {
+                const remOutput = document.getElementById('rem-output');
+                const range = document.createRange();
+                const selection = window.getSelection();
+                range.selectNodeContents(remOutput);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                const copiedText = document.createElement('span');
+                copiedText.textContent = 'Copied';
+                copiedText.style.opacity = 1;
+                copiedText.style.transition = 'opacity 500ms';
+                remOutput.after(copiedText);
+                setTimeout(() => copiedText.style.opacity = 0, 500);
+            }
+        </script>
+
+        <style>
+            #rem-output:hover {
+                cursor: pointer;
+                color: green;
+            }
+            .main {
+                max-width: 360px;
+            }
+        </style>
+
+    </head>
+    <body class="p-5">
+        <div class="m-auto main">
+            <h1 class="text-center">Pixel to Rem</h1>
+
+            <form class="d-flex flex-column">
+                <div class="my-4">
+                    <label for="base-font-size-input" class="form-label">Base Font Size:</label>
+                    <!-- <span id="base-font-size-label">16</span>px -->
+                    <input type="number" class="form-control form-control-lg" id="base-font-size-input" name="base-font-size" min="8" max="100" value="16" step="1" onchange="convertFontSize()" onkeyup="convertFontSize()">
+                </div>
+
+                <div class="my-4">
+                    <label for="pixels-input" class="form-label">Font Size in Pixels:</label>
+                    <input type="number" id="pixels-input" name="pixels" value="16" class="form-control form-control-lg" onchange="convertFontSize()" onkeyup="convertFontSize()">
+                </div>
+
+                <input type="reset" class="btn btn-primary btn-lg my-4">
+            </form>
+
+            <p class="my-3">Font Size in REMs: <strong id="rem-output" class="px-2 py-1 border rounded me-2" onclick="copyToClipboard()">1rem</strong></p>
+        </div>
+    </body>
+</html>
+
